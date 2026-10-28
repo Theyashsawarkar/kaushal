@@ -144,3 +144,34 @@ def servers() -> list[Server]:
                           {str(k): str(v) for k, v in (spec.get("env") or {}).items()},
                           spec.get("description", ""), origin))
     return out
+
+
+# ------------------------------------------------------------------ off
+# Skills and servers turned off for every agent (`kaushal off NAME`, x in
+# the app): ~/.config/kaushal/off.toml, written by kaushal, yours to edit.
+
+def off_file() -> str:
+    return os.path.join(config_dir(), "off.toml")
+
+
+def off() -> dict[str, set[str]]:
+    data = _read_toml(off_file())
+    return {k: {str(n) for n in data.get(k, [])} for k in ("skills", "servers")}
+
+
+def set_off(kind: str, name: str, is_off: bool) -> None:
+    """Turns a skill (kind "skills") or server ("servers") off or back on."""
+    current = off()
+    (current[kind].add if is_off else current[kind].discard)(name)
+    lines = ["# Turned off for every agent: `kaushal on NAME` (or x in `kaushal ui`) turns one back on.",
+             *(f"{k} = [{', '.join(json_str(n) for n in sorted(current[k]))}]" for k in ("skills", "servers"))]
+    os.makedirs(config_dir(), exist_ok=True)
+    tmp = off_file() + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    os.replace(tmp, off_file())
+
+
+def json_str(s: str) -> str:
+    import json
+    return json.dumps(s)

@@ -1,17 +1,17 @@
 """kaushal's commands."""
-import json
 import os
 import sys
 
-from . import VERSION
-from .agents import ALL, Agent
-from .store import REPO, Server, config_dir, servers, skills, state_dir
+from . import VERSION, ops
+from .store import REPO, config_dir, servers, set_off, skills
 
 HELP = f"""kaushal {VERSION}: skills and tools for every AI agent on this machine
 
   kaushal                 what there is: skills, MCP servers, agents
+  kaushal ui              the app: every skill, tool and agent; sync, doctor, test, turn off
   kaushal sync [-n]       give every agent all of it (-n: only say what would change)
   kaushal doctor          check every agent has everything; exit 1 if not
+  kaushal off NAME        turn a skill or tool off for every agent (`kaushal on NAME` undoes it)
   kaushal unsync          take back everything kaushal added
   kaushal new NAME        start a skill of your own in {os.path.join(config_dir(), "skills")}
   kaushal path [NAME]     where the skills (or one skill) live
@@ -21,106 +21,45 @@ ship in {os.path.join(REPO, "skills")}, yours go in {os.path.join(config_dir(), 
 MCP servers come from mcp.toml there and in {config_dir()}."""
 
 
-def state_file() -> str:
-    return os.path.join(state_dir(), "state.json")
-
-
-def load_state() -> dict:
-    try:
-        with open(state_file(), encoding="utf-8") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {}
-
-
-def save_state(state: dict) -> None:
-    os.makedirs(state_dir(), exist_ok=True)
-    tmp = state_file() + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2, sort_keys=True)
-    os.replace(tmp, state_file())
-
-
-def short(path: str) -> str:
-    home = os.path.expanduser("~")
-    return "~" + path[len(home):] if path.startswith(home) else path
-
-
-def present() -> list[Agent]:
-    return [a for a in ALL if a.present()]
-
-
-def wanted() -> tuple[list, list[Server], list[Server]]:
-    """Skills, servers to register (installed), servers left out (not installed)."""
-    all_servers = servers()
-    return skills(), [s for s in all_servers if s.installed()], [s for s in all_servers if not s.installed()]
-
-
 def run_sync(dry: bool, quiet: bool, take_back: bool = False) -> int:
-    sk, sv, missing = wanted()
-    if take_back:
-        sk, sv = [], []
-    state = load_state()
+    results, w = ops.sync(dry=dry, take_back=take_back)
     failed = 0
-    for agent in present():
-        for target in agent.targets():
-            key = f"{agent.key}:{target}"
-            try:
-                changes, owned = agent.sync(target, sk, sv, state.get(key, {}), dry)
-            except (OSError, ValueError) as e:
-                print(f"{agent.label} ({short(target)}): {e}", file=sys.stderr)
-                failed += 1
-                continue
-            if not dry:
-                state[key] = owned
-            if changes or not quiet:
-                print(f"{agent.label} ({short(target)}): " + ("; ".join(changes) if changes else "up to date"))
-    if not dry:
-        save_state({k: v for k, v in state.items() if any(v.values())})
-    if missing and not quiet and not take_back:
-        print("not installed, so not given to agents: " + ", ".join(f"{s.name} ({s.command})" for s in missing))
+    for r in results:
+        label = f"{r.target.agent.label} ({ops.short(r.target.path)})"
+        if r.error:
+            print(f"{label}: {r.error}", file=sys.stderr)
+            failed += 1
+        elif r.changes or not quiet:
+            print(f"{label}: " + ("; ".join(r.changes) if r.changes else "up to date"))
+    if w.missing and not quiet and not take_back:
+        print("not installed, so not given to agents: " + ", ".join(f"{s.name} ({s.command})" for s in w.missing))
     return 1 if failed else 0
 
 
 def doctor() -> int:
-    sk, sv, missing = wanted()
-    problems = [f"skill {s.name}: {p}" for s in sk for p in s.problems]
-    problems += [f"server {s.name}: `{s.command}` isn't installed" for s in missing]
-    agents = present()
-    if not [a for a in agents if a.key != "agents"]:
-        problems.append("no agent found (claude, codex, gemini, opencode)")
-    state = load_state()
-    notes = []
-    for agent in agents:
-        for target in agent.targets():
-            changes, _ = agent.sync(target, sk, sv, state.get(f"{agent.key}:{target}", {}), dry=True)
-            pending = [c for c in changes if not c.startswith("skip ")]
-            # Yours winning over kaushal's is how it should be: a note, not a fault.
-            notes += [f"{agent.label} ({short(target)}): {c}" for c in changes if c.startswith("skip ")]
-            if pending:
-                problems.append(f"{agent.label} ({short(target)}): out of date ({'; '.join(pending)}); run `kaushal sync`")
+    notes, problems, summary = ops.diagnose()
     for n in notes:
         print("· " + n)
     for p in problems:
         print("✗ " + p)
     if not problems:
-        print(f"✓ {len(sk)} skill(s) and {len(sv)} server(s) in every agent: " + ", ".join(a.label for a in agents))
+        print("✓ " + summary)
     return 1 if problems else 0
 
 
 def overview() -> int:
-    sk, sv, missing = wanted()
+    w = ops.wanted()
     print("Skills:")
-    for s in sk:
-        flag = f"  ✗ {'; '.join(s.problems)}" if s.problems else ""
+    for s in w.all_skills:
+        flag = f"  ✗ {'; '.join(s.problems)}" if s.problems else "  (off)" if s.name in w.off["skills"] else ""
         print(f"  {s.name:<16} {s.origin:<6} {s.description[:90]}{'…' if len(s.description) > 90 else ''}{flag}")
-    if not sk:
+    if not w.all_skills:
         print("  (none)")
     print("MCP servers:")
-    for s in sv + missing:
-        note = "" if s in sv else "  (not installed)"
+    for s in w.all_servers:
+        note = "  (off)" if s.name in w.off["servers"] else "" if s.installed() else "  (not installed)"
         print(f"  {s.name:<16} {s.command} {' '.join(s.args)}{note}")
-    print("Agents: " + (", ".join(a.label for a in present()) or "none found"))
+    print("Agents: " + (", ".join(dict.fromkeys(t.agent.label for t in ops.targets())) or "none found"))
     return 0
 
 
@@ -136,16 +75,48 @@ to them by path relative to this file.
 """
 
 
-def new(name: str) -> int:
+def new_skill(name: str) -> str:
+    """Creates ~/.config/kaushal/skills/NAME/SKILL.md from the template; returns its path."""
     folder = os.path.join(config_dir(), "skills", name)
     if os.path.exists(folder):
-        print(f"kaushal: {short(folder)} already exists", file=sys.stderr)
-        return 1
+        raise FileExistsError(f"{ops.short(folder)} already exists")
     os.makedirs(folder)
-    with open(os.path.join(folder, "SKILL.md"), "w", encoding="utf-8") as f:
+    path = os.path.join(folder, "SKILL.md")
+    with open(path, "w", encoding="utf-8") as f:
         f.write(SKELETON.format(name=name))
-    print(f"{short(os.path.join(folder, 'SKILL.md'))}: edit it, then `kaushal sync`")
+    return path
+
+
+def new(name: str) -> int:
+    from .store import NAME_RE
+    if not NAME_RE.match(name):
+        print("kaushal: a skill's name is lowercase letters, digits and dashes", file=sys.stderr)
+        return 1
+    try:
+        path = new_skill(name)
+    except FileExistsError as e:
+        print(f"kaushal: {e}", file=sys.stderr)
+        return 1
+    print(f"{ops.short(path)}: edit it, then `kaushal sync`")
     return 0
+
+
+def kind_of(name: str) -> str | None:
+    if any(s.name == name for s in skills()):
+        return "skills"
+    if any(s.name == name for s in servers()):
+        return "servers"
+    return None
+
+
+def switch(name: str, is_off: bool) -> int:
+    kind = kind_of(name)
+    if not kind:
+        print(f"kaushal: no skill or tool called {name}", file=sys.stderr)
+        return 1
+    set_off(kind, name, is_off)
+    print(f"{name} {'off' if is_off else 'on'} for every agent")
+    return run_sync(dry=False, quiet=True)
 
 
 def main(argv: list[str]) -> int:
@@ -161,12 +132,17 @@ def main(argv: list[str]) -> int:
         return 0
     if cmd == "":
         return overview()
+    if cmd == "ui":
+        from .tui import run
+        return run()
     if cmd == "sync":
         return run_sync(dry="-n" in rest or "--dry-run" in rest, quiet="-q" in rest or "--quiet" in rest)
     if cmd == "doctor":
         return doctor()
     if cmd == "unsync":
         return run_sync(dry="-n" in rest, quiet=False, take_back=True)
+    if cmd in ("off", "on") and len(rest) == 1:
+        return switch(rest[0], cmd == "off")
     if cmd == "new" and len(rest) == 1:
         return new(rest[0])
     if cmd == "path":

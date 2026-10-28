@@ -28,6 +28,11 @@ units="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 mkdir -p "$units"
 ln -sfn "$src/systemd/kaushal.service" "$units/kaushal.service"
 systemctl --user daemon-reload 2>/dev/null || true
+# In the app launcher: kaushal ui, with its icon.
+share="${XDG_DATA_HOME:-$HOME/.local/share}"
+mkdir -p "$share/applications" "$share/icons/hicolor/scalable/apps"
+sed "s|@BIN@|$HOME/.local/bin/kaushal|" "$src/assets/kaushal.desktop" > "$share/applications/kaushal.desktop"
+cp "$src/assets/logo.svg" "$share/icons/hicolor/scalable/apps/kaushal.svg"
 "$src/bin/kaushal" sync
 echo "kaushal installed: $HOME/.local/bin/kaushal"
 echo "to sync at every login: systemctl --user enable kaushal (Vayu starts it for you)"

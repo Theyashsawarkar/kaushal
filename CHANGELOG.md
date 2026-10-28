@@ -2,8 +2,17 @@
 
 Newest first. Releases are tags (`vX.Y.Z`) with `VERSION` in kaushal/__init__.py.
 
-## Unreleased
+## v0.2.0 -- 2026-10-28
 
+- **The app, `kaushal ui`**: every skill, tool and agent in three tabs, in
+  the look of Vayu's other terminal tools. Read, edit (Vayu's: your own
+  copy) and create skills, edit their settings; test a tool (start it, do
+  the MCP handshake, list its tools); see what every agent has and what a
+  sync would change; sync, doctor, turn things off, take back one agent's,
+  all without leaving it. Follows varna's theme.
+- **`kaushal off NAME` / `kaushal on NAME`**: turn a skill or tool off for
+  every agent and back (`~/.config/kaushal/off.toml`).
+- A launcher entry ("kaushal"), installed by install.sh.
 - **A Skills page** on the website: every skill as a card, and a page for
   each with its full instructions and files, linked from every page's top
   bar. The README's skills list is now written from skills/, so it never

@@ -77,13 +77,60 @@ systemctl --user enable kaushal     # sync at every login
 On Vayu, `kosha install kaushal` does both (Vayu starts the unit at login).
 It needs Python 3.11 or newer and git.
 
+## The app
+
+<p align="center">
+  <img alt="kaushal ui: every skill, which agents have it, its files and settings" src="assets/screenshots/skills.png" width="900">
+</p>
+
+`kaushal ui` shows every skill, tool and agent in one place, in three tabs:
+
+- **Skills**: Vayu's and yours, which agents have each, its files and
+  settings. Read one, edit it (editing one of Vayu's makes your own copy,
+  which replaces it), edit its settings, start a new one, turn one off.
+- **Tools**: the MCP servers, whether each is installed and in which
+  agents. Test one: kaushal starts it, does the MCP handshake and lists
+  its tools, so you know it works before an agent needs it.
+- **Agents**: every agent and Claude Code account it found (and the ones
+  not installed), whether each is up to date, what kaushal added to it,
+  and what a sync would change. Take back kaushal's things from one agent.
+
+The top bar says whether every agent is in sync; `s` syncs, `d` runs the
+doctor, both without leaving the app. On Vayu it's a tmux popup on
+`prefix A`, and in the app launcher.
+
+<p align="center">
+  <img alt="The Tools tab: every MCP server, in which agents" src="assets/screenshots/tools.png" width="440">
+  <img alt="The Agents tab: every agent, up to date or not" src="assets/screenshots/agents.png" width="440">
+</p>
+
+| Key | What it does |
+|---|---|
+| `1` `2` `3`, `Tab` `Shift+Tab` | Skills, Tools, Agents; next, previous tab |
+| `j` `k` (`↓` `↑`), `g` `G` | move; first, last |
+| `Enter` | read the skill / test the tool / open the agent's folder |
+| `e` | edit the skill (one of Vayu's: your own copy first) |
+| `c` | edit the skill's settings (`~/.config/kaushal/NAME.toml`, from its example) |
+| `n` | a new skill of your own, opened in your editor |
+| `x` | turn the skill or tool off for every agent (again: back on) |
+| `t` | test the tool |
+| `u` | take back what kaushal added to the agent (asks) |
+| `s` | sync every agent |
+| `d` | doctor |
+| `/` | filter the list (`Esc` clears) |
+| `r` | reload |
+| `?` | every key |
+| `q` `Esc` | quit |
+
 ## Use
 
 | Command | What it does |
 |---|---|
 | `kaushal` | lists the skills, MCP servers and agents it found |
+| `kaushal ui` | the app ([above](#the-app)) |
 | `kaushal sync` | gives every agent all of it (`-n`: only say what would change) |
 | `kaushal doctor` | checks every agent has everything; exit 1 if not |
+| `kaushal off NAME` | turns a skill or tool off for every agent (`kaushal on NAME` turns it back on); kept in `~/.config/kaushal/off.toml` |
 | `kaushal unsync` | takes back everything kaushal added |
 | `kaushal new NAME` | starts a skill of your own in `~/.config/kaushal/skills/NAME` |
 | `kaushal path [NAME]` | where the skills (or one skill) live |
@@ -190,6 +237,8 @@ launcher, has Vayu's skills and tools from its first message.
   for the agents working on Vayu itself.
 - **Your settings for Vayu's skills** stay on your machine, in
   `~/.config/kaushal/` (the `dsr` skill's in `dsr.toml`).
+- **Open it**: `prefix A` in tmux (a popup), "kaushal" in the launcher, or
+  `kaushal ui`; its keys are in Vayu's keybinding search (`Super+Shift+/`).
 - **Check it**: `kaushal doctor`, or `kaushal` for what's there.
 
 ## License

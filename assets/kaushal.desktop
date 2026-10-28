@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=kaushal
+GenericName=Skills for AI agents
+Comment=Every skill and tool, in every AI agent: browse, test, sync
+Exec=@BIN@ ui
+Icon=kaushal
+Terminal=true
+Categories=Development;
+Keywords=ai;agent;agents;skills;mcp;claude;codex;opencode;
