@@ -1,0 +1,10 @@
+# Copy to ~/.config/kaushal/dsr.toml and change what differs for you.
+# Everything is optional.
+
+subject = "Daily Status Report"       # how to find your DSR thread in sent mail
+# account = "work"                    # sandesh account to send from, if you have several
+repos = ["~/work", "~/codes"]         # where your work repositories are (searched 3 levels deep)
+# authors = ["you@example.com"]       # your commit emails (default: git's user.email)
+lunch = "01:00 PM to 02:00 PM"        # "" if your DSR has no lunch row
+lunch_task = "Lunch Break"
+greeting = "Hello,"

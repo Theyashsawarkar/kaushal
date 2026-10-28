@@ -1,0 +1,12 @@
+[Unit]
+Description=kaushal: give every AI agent the skills and tools
+Documentation=https://github.com/Theyashsawarkar/kaushal
+
+[Service]
+Type=oneshot
+# A user unit's PATH lacks ~/.local/bin, where the tools are.
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=%h/.local/bin/kaushal sync --quiet
+
+[Install]
+WantedBy=default.target

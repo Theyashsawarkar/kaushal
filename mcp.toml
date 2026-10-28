@@ -1,0 +1,25 @@
+# Vayu's MCP servers, given to every agent `kaushal sync` finds (only the
+# ones whose command is installed). Add or override yours in
+# ~/.config/kaushal/mcp.toml; `enabled = false` leaves one out.
+# "{agent}" in args or env becomes the agent's name (claude, codex, ...).
+
+[servers.anumati]
+description = "Run commands as root (or as you, outside your sandbox) after the user approves each one: request_root_commands"
+command = "anumati"
+args = ["--mcp"]
+
+[servers.ekatva]
+description = "The user's phone: status, ring, lock, SMS and calls (asks the user first), its clipboard and files, keeping the laptop awake"
+command = "ekatva"
+args = ["mcp"]
+env = { EKATVA_AGENT = "{agent}" }
+
+[servers.sandesh]
+description = "The user's Gmail and Google Chat: list, search, read, draft and send (sends ask the user first; html for tables)"
+command = "sandesh"
+args = ["mcp"]
+
+[servers.sangam]
+description = "The user's GitHub pull requests: list, read, diff; comment, review and merge after the user approves"
+command = "sangam"
+args = ["mcp"]
