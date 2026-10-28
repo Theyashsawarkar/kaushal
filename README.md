@@ -1,8 +1,25 @@
-# kaushal
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.svg">
+    <img alt="kaushal" src="assets/banner-dark.svg" width="560">
+  </picture>
+</p>
 
-**Skills and tools for every AI agent on your machine, in every session.**
+<p align="center">
+  <b>Every skill and tool, in every AI agent.</b><br>
+  Claude Code on every account, Codex, opencode, Gemini CLI: whichever agent you open, it already has your skills and your tools.
+</p>
 
-> *Kaushal* (कौशल) is Sanskrit for "skill".
+<p align="center">
+  <a href="https://github.com/Theyashsawarkar/kaushal/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Theyashsawarkar/kaushal/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/Theyashsawarkar/kaushal/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Theyashsawarkar/kaushal?color=f9e2af&label=release"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-f5e0dc"></a>
+  <img alt="Python 3.11+, no dependencies" src="https://img.shields.io/badge/python-3.11%2B%2C%20stdlib%20only-a6e3a1">
+</p>
+
+> *Kaushal* (कौशल) is Sanskrit for "skill": what you teach once, every
+> agent knows.
 
 You use more than one AI agent: Claude Code (maybe on several accounts),
 Codex, opencode, Gemini CLI. Each keeps its own skills, its own MCP servers
@@ -25,6 +42,29 @@ has all of them:
 It's part of [Vayu](https://github.com/Theyashsawarkar/vayu), and ships
 Vayu's skills and tools, but works on its own: standard library Python, no
 dependencies.
+
+## How it works
+
+<p align="center">
+  <img alt="kaushal sync gives the skills and MCP servers in one store to every agent" src="assets/how-it-works.svg" width="880">
+</p>
+
+1. **One store.** Skills and MCP servers are kept in one place: Vayu's in
+   this repository, yours in `~/.config/kaushal/`.
+2. **Written into each agent's own config.** `kaushal sync` puts them
+   where each agent already looks, in its own format: skills are linked
+   (so editing one takes effect everywhere at once), servers registered,
+   and agents that don't read skill folders get a short index of the
+   skills in their instructions file. Nothing runs between an agent and
+   its tools: each loads them the way it always does, however it's
+   started ([ADR 2](docs/adr/0002-one-store-synced-into-each-agent.md)).
+3. **Only its own.** It records what it added and never changes anything
+   else ([ADR 4](docs/adr/0004-change-only-what-kaushal-added.md)).
+4. **Always current.** It syncs at every login and every install or
+   update, so a new agent, account or tool is covered without asking
+   ([ADR 5](docs/adr/0005-sync-at-login-and-on-install.md)).
+
+Why it's built this way: the [decision records](docs/adr/0001-record-architecture-decisions.md).
 
 ## Install
 
@@ -113,6 +153,34 @@ Only servers whose command is installed are registered.
 | [ekatva](https://github.com/Theyashsawarkar/ekatva) | your phone: status, ring, lock, SMS and calls (asks you first), clipboard, files |
 | [sandesh](https://github.com/Theyashsawarkar/sandesh) | your Gmail and Google Chat (sends ask you first) |
 | [sangam](https://github.com/Theyashsawarkar/sangam) | your GitHub pull requests (comments, reviews and merges ask you first) |
+
+## In Vayu
+
+On [Vayu](https://github.com/Theyashsawarkar/vayu), kaushal is part of the
+desktop: every AI agent you start, from a terminal, tmux, an editor or the
+launcher, has Vayu's skills and tools from its first message.
+
+- **Installed by [kosha](https://github.com/Theyashsawarkar/kosha)** with
+  the rest of Vayu's tools (`kosha install kaushal`; Vayu's installer does
+  it). Its `install.sh` links `~/.local/bin/kaushal` and the login unit and
+  runs the first sync.
+- **Synced at every login**: `kaushal.service` is one of the units Vayu's
+  session starts (`sway-session.sh`'s `UNITS`), and at every `kosha
+  install` or `kosha update` of any package, so a tool kosha installs is
+  in your agents at once.
+- **Every Claude Code account**: [vesha](https://github.com/Theyashsawarkar/vesha)
+  keeps each account in its own profile; kaushal gives every profile the
+  tools ([ADR 6](docs/adr/0006-every-claude-account.md)).
+- **Vayu's tools for agents** are its MCP servers: anumati (root commands),
+  ekatva (your phone), sandesh (mail and chat), sangam (pull requests).
+  Each asks you before anything reaches other people or runs as root.
+- **Vayu's rule**: a new skill or agent-facing tool goes into kaushal (a
+  skill folder or an `mcp.toml` entry), never into one agent's config by
+  hand, so every agent gets it. Vayu's `CLAUDE.md` and `AGENTS.md` say so,
+  for the agents working on Vayu itself.
+- **Your settings for Vayu's skills** stay on your machine, in
+  `~/.config/kaushal/` (the `dsr` skill's in `dsr.toml`).
+- **Check it**: `kaushal doctor`, or `kaushal` for what's there.
 
 ## License
 

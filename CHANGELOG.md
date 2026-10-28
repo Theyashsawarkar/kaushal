@@ -2,6 +2,13 @@
 
 Newest first. Releases are tags (`vX.Y.Z`) with `VERSION` in kaushal/__init__.py.
 
+## Unreleased
+
+- **A website**: theyashsawarkar.github.io/kaushal, built from the README,
+  this changelog and seven decision records (docs/adr/) by the generator
+  every Vayu tool shares; a how-it-works diagram; the README explains how
+  kaushal works in Vayu.
+
 ## v0.1.0 -- 2026-10-28
 
 - **Skills for every agent.** Skills are folders with a SKILL.md (the open

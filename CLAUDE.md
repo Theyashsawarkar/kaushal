@@ -25,3 +25,4 @@ it must work without Vayu.
   real agents unless asked.
 - Standard library only. `ruff check .` and `python -m unittest discover -s tests` must pass.
 - Every change: a CHANGELOG.md entry; releases are tags with `VERSION` bumped.
+- The website (docs/, GitHub Pages) is generated: after changing README.md, CHANGELOG.md or docs/adr/, run `python3 scripts/build-site.py` and commit docs/ (CI checks it). A significant design decision gets a new ADR in docs/adr/ (next number; supersede, never rewrite). scripts/build-site.py is shared by every Vayu tool: change it in one, copy it to all.

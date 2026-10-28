@@ -1,0 +1,8 @@
+# The project website (docs/, GitHub Pages): built by scripts/build-site.py
+name = "kaushal"
+sanskrit = "कौशल"
+meaning = "skill"
+tagline = "Every skill and tool, in every AI agent: Claude Code on every account, Codex, opencode, Gemini CLI, in every session."
+color = "yellow"
+kind = "skills for AI agents"
+logo = "assets/logo.svg"

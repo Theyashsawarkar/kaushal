@@ -10,3 +10,6 @@ ignore = [
   "UP015",
 ]
 
+
+[lint.per-file-ignores]
+"scripts/build-site.py" = ["E501"]   # HTML and CSS templates
