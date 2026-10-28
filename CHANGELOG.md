@@ -4,6 +4,11 @@ Newest first. Releases are tags (`vX.Y.Z`) with `VERSION` in kaushal/__init__.py
 
 ## Unreleased
 
+- **A Skills page** on the website: every skill as a card, and a page for
+  each with its full instructions and files, linked from every page's top
+  bar. The README's skills list is now written from skills/, so it never
+  misses one (`scripts/site.py`, around the shared site generator).
+
 - **prasar** joins the MCP servers: agents can check, draft and propose
   posts for X and LinkedIn; every post waits for the user's approval.
 

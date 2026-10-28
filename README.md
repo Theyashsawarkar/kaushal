@@ -142,9 +142,16 @@ Only servers whose command is installed are registered.
 
 ## Vayu's skills
 
-| Skill | What it does |
+<!-- skills: written by scripts/site.py from skills/ -->
+1 skill, with its full instructions on the [Skills page](https://theyashsawarkar.github.io/kaushal/skills/):
+
+| Skill | What it does, and when an agent uses it |
 |---|---|
-| [`dsr`](skills/dsr/SKILL.md) | Writes and sends your Daily Status Report: reconstructs the day from your commits across repositories, matches the format of your past DSRs, checks the timetable (start, end, lunch, no gaps) and sends a real HTML table through [sandesh](https://github.com/Theyashsawarkar/sandesh) as a reply-all in your DSR thread, after you confirm. Settings: `~/.config/kaushal/dsr.toml` ([example](skills/dsr/config.example.toml)). |
+| [`dsr`](skills/dsr/SKILL.md) | Write and send the user's Daily Status Report (DSR), the end-of-day email with a Time \| Tasks table, for any date. Reconstructs the day from the user's git commits, matches the format of their past DSRs, checks the timetable (start and end time, lunch break, no gaps) and sends it as a real HTML table through sandesh, as a reply-all in their DSR thread. Use when the user asks for a DSR, daily status report, daily report, status mail or end-of-day update, or to send or backfill one for a date. |
+<!-- /skills -->
+
+Settings for a skill stay on your machine, in `~/.config/kaushal/` (the `dsr` skill's in
+`dsr.toml`, [example](skills/dsr/config.example.toml)).
 
 ## Vayu's tools
 

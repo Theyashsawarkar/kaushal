@@ -17,7 +17,7 @@
 <body>
 <header class="top"><div class="in">
 <a class="brand" href="index.html"><img src="assets/logo.svg" alt=""><span>kaushal <small>कौशल</small></span></a>
-<nav><a href="index.html" class="on">Overview</a><a href="changelog.html" class="">Changelog</a><a href="adr/index.html" class=" hide">Decisions</a><a class="gh" href="https://github.com/Theyashsawarkar/kaushal">GitHub ↗</a></nav></div></header>
+<nav><a href="index.html" class="on">Overview</a><a href="changelog.html" class="">Changelog</a><a href="adr/index.html" class=" hide">Decisions</a><a href="skills/index.html" class="">Skills</a><a class="gh" href="https://github.com/Theyashsawarkar/kaushal">GitHub ↗</a></nav></div></header>
 <section class="hero"><div class="in"><div>
 <div class="eyebrow">skills for AI agents</div>
 <h1>kaushal</h1>
@@ -66,7 +66,11 @@ env = { MYTOOL_AGENT = &quot;{agent}&quot; }   # {agent}: claude, codex, gemini,
 enabled = false                      # leave one of Vayu&#x27;s out</code></pre>
 <p>Only servers whose command is installed are registered.</p>
 <h2 id="vayus-skills"><a class="anchor" href="#vayus-skills">#</a>Vayu's skills</h2>
-<div class="table"><table><thead><tr><th>Skill</th><th>What it does</th></tr></thead><tbody><tr><td><a href="https://github.com/Theyashsawarkar/kaushal/blob/main/skills/dsr/SKILL.md"><code>dsr</code></a></td><td>Writes and sends your Daily Status Report: reconstructs the day from your commits across repositories, matches the format of your past DSRs, checks the timetable (start, end, lunch, no gaps) and sends a real HTML table through <a href="https://github.com/Theyashsawarkar/sandesh">sandesh</a> as a reply-all in your DSR thread, after you confirm. Settings: <code>~/.config/kaushal/dsr.toml</code> (<a href="https://github.com/Theyashsawarkar/kaushal/blob/main/skills/dsr/config.example.toml">example</a>).</td></tr></tbody></table></div>
+<!-- skills: written by scripts/site.py from skills/ -->
+1 skill, with its full instructions on the [Skills page](https://theyashsawarkar.github.io/kaushal/skills/):
+<div class="table"><table><thead><tr><th>Skill</th><th>What it does, and when an agent uses it</th></tr></thead><tbody><tr><td><a href="skills/dsr.html"><code>dsr</code></a></td><td>Write and send the user's Daily Status Report (DSR), the end-of-day email with a Time | Tasks table, for any date. Reconstructs the day from the user's git commits, matches the format of their past DSRs, checks the timetable (start and end time, lunch break, no gaps) and sends it as a real HTML table through sandesh, as a reply-all in their DSR thread. Use when the user asks for a DSR, daily status report, daily report, status mail or end-of-day update, or to send or backfill one for a date.</td></tr></tbody></table></div>
+<!-- /skills -->
+<p>Settings for a skill stay on your machine, in <code>~/.config/kaushal/</code> (the <code>dsr</code> skill's in <code>dsr.toml</code>, <a href="https://github.com/Theyashsawarkar/kaushal/blob/main/skills/dsr/config.example.toml">example</a>).</p>
 <h2 id="vayus-tools"><a class="anchor" href="#vayus-tools">#</a>Vayu's tools</h2>
 <div class="table"><table><thead><tr><th>Server</th><th>What it gives agents</th></tr></thead><tbody><tr><td><a href="https://github.com/Theyashsawarkar/anumati">anumati</a></td><td>root commands, run only after you approve each one</td></tr><tr><td><a href="https://github.com/Theyashsawarkar/ekatva">ekatva</a></td><td>your phone: status, ring, lock, SMS and calls (asks you first), clipboard, files</td></tr><tr><td><a href="https://github.com/Theyashsawarkar/prasar">prasar</a></td><td>posts to your X and LinkedIn: check, draft, propose (every post asks you first)</td></tr><tr><td><a href="https://github.com/Theyashsawarkar/sandesh">sandesh</a></td><td>your Gmail and Google Chat (sends ask you first)</td></tr><tr><td><a href="https://github.com/Theyashsawarkar/sangam">sangam</a></td><td>your GitHub pull requests (comments, reviews and merges ask you first)</td></tr></tbody></table></div>
 <h2 id="in-vayu"><a class="anchor" href="#in-vayu">#</a>In Vayu</h2>

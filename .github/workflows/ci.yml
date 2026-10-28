@@ -34,4 +34,4 @@ jobs:
           bin/kaushal sync -n
           bin/kaushal doctor || true
       - name: Website is up to date
-        run: python3 scripts/build-site.py --check
+        run: python3 scripts/site.py --check
