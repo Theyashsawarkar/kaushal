@@ -14,6 +14,11 @@ command = "ekatva"
 args = ["mcp"]
 env = { EKATVA_AGENT = "{agent}" }
 
+[servers.prasar]
+description = "Posts to the user's X and LinkedIn: check a text against each network, draft, and propose posts (every one waits for the user's approval; X needs their click)"
+command = "prasar"
+args = ["mcp", "--requester", "{agent}"]
+
 [servers.sandesh]
 description = "The user's Gmail and Google Chat: list, search, read, draft and send (sends ask the user first; html for tables)"
 command = "sandesh"

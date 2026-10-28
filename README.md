@@ -152,6 +152,7 @@ Only servers whose command is installed are registered.
 |---|---|
 | [anumati](https://github.com/Theyashsawarkar/anumati) | root commands, run only after you approve each one |
 | [ekatva](https://github.com/Theyashsawarkar/ekatva) | your phone: status, ring, lock, SMS and calls (asks you first), clipboard, files |
+| [prasar](https://github.com/Theyashsawarkar/prasar) | posts to your X and LinkedIn: check, draft, propose (every post asks you first) |
 | [sandesh](https://github.com/Theyashsawarkar/sandesh) | your Gmail and Google Chat (sends ask you first) |
 | [sangam](https://github.com/Theyashsawarkar/sangam) | your GitHub pull requests (comments, reviews and merges ask you first) |
 
@@ -173,7 +174,8 @@ launcher, has Vayu's skills and tools from its first message.
   keeps each account in its own profile; kaushal gives every profile the
   tools ([ADR 6](docs/adr/0006-every-claude-account.md)).
 - **Vayu's tools for agents** are its MCP servers: anumati (root commands),
-  ekatva (your phone), sandesh (mail and chat), sangam (pull requests).
+  ekatva (your phone), prasar (posts to X and LinkedIn), sandesh (mail and
+  chat), sangam (pull requests).
   Each asks you before anything reaches other people or runs as root.
 - **Vayu's rule**: a new skill or agent-facing tool goes into kaushal (a
   skill folder or an `mcp.toml` entry), never into one agent's config by

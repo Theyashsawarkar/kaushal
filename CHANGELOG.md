@@ -4,6 +4,9 @@ Newest first. Releases are tags (`vX.Y.Z`) with `VERSION` in kaushal/__init__.py
 
 ## Unreleased
 
+- **prasar** joins the MCP servers: agents can check, draft and propose
+  posts for X and LinkedIn; every post waits for the user's approval.
+
 - **A website**: theyashsawarkar.github.io/kaushal, built from the README,
   this changelog and seven decision records (docs/adr/) by the generator
   every Vayu tool shares; a how-it-works diagram; the README explains how

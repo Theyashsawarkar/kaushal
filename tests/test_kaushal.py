@@ -17,7 +17,7 @@ from kaushal.store import frontmatter  # noqa: E402
 class Home:
     """A throwaway HOME with fake `claude`, `codex`, `opencode` and tool commands on PATH."""
 
-    def __init__(self, commands=("claude", "codex", "opencode", "sandesh", "sangam", "ekatva", "anumati")):
+    def __init__(self, commands=("claude", "codex", "opencode", "sandesh", "sangam", "ekatva", "anumati", "prasar")):
         self.dir = tempfile.mkdtemp()
         self.bin = os.path.join(self.dir, "fakebin")
         os.makedirs(self.bin)
@@ -66,6 +66,7 @@ class Sync(unittest.TestCase):
         self.assertIn("mine", cfg["mcpServers"])
         self.assertEqual(cfg["mcpServers"]["sandesh"], {"type": "stdio", "command": "sandesh", "args": ["mcp"], "env": {}})
         self.assertEqual(cfg["mcpServers"]["ekatva"]["env"], {"EKATVA_AGENT": "claude"})
+        self.assertEqual(cfg["mcpServers"]["prasar"]["args"], ["mcp", "--requester", "claude"])
         # The shared folder of the Agent Skills convention.
         self.assertTrue(os.path.islink(h.path(".agents/skills/dsr")))
         # Codex: a valid config.toml with the servers, skills, an index.
