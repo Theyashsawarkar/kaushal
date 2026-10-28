@@ -60,8 +60,9 @@ dependencies.
    started ([ADR 2](docs/adr/0002-one-store-synced-into-each-agent.md)).
 3. **Only its own.** It records what it added and never changes anything
    else ([ADR 4](docs/adr/0004-change-only-what-kaushal-added.md)).
-4. **Always current.** It syncs at every login and every install or
-   update, so a new agent, account or tool is covered without asking
+4. **Always current.** It syncs at every login and whenever kaushal is
+   installed or updated, so a new agent, account or tool is covered without
+   asking
    ([ADR 5](docs/adr/0005-sync-at-login-and-on-install.md)).
 
 Why it's built this way: the [decision records](docs/adr/0001-record-architecture-decisions.md).
@@ -165,9 +166,9 @@ launcher, has Vayu's skills and tools from its first message.
   it). Its `install.sh` links `~/.local/bin/kaushal` and the login unit and
   runs the first sync.
 - **Synced at every login**: `kaushal.service` is one of the units Vayu's
-  session starts (`sway-session.sh`'s `UNITS`), and at every `kosha
-  install` or `kosha update` of any package, so a tool kosha installs is
-  in your agents at once.
+  session starts (`sway-session.sh`'s `UNITS`), and whenever kosha
+  installs or updates kaushal. A tool you install with kosha reaches your
+  agents at the next login, or at once with `kaushal sync`.
 - **Every Claude Code account**: [vesha](https://github.com/Theyashsawarkar/vesha)
   keeps each account in its own profile; kaushal gives every profile the
   tools ([ADR 6](docs/adr/0006-every-claude-account.md)).
